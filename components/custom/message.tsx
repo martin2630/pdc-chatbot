@@ -2,17 +2,13 @@
 
 import { UIMessage } from "ai";
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
-import { Streamdown } from "streamdown";
 
-import { PaseCaja } from "@/interfaces/pase-caja.interface";
 import { User } from "@/interfaces/user.interfaces";
 import { WeatherAtLocation } from "@/interfaces/weather.interface";
 
 import { BotIcon, UserIcon } from "./icons";
 import PagoLinea from "../predial/pago-linea";
 import PaseDeCaja from "../predial/pase-de-caja";
-import { PdfPreview } from "../predial/pdf-preview";
 import PredialDummy from "../predial/predial-dumy";
 import { ListUsers } from "../users/list-users";
 import { UserDetails } from "../users/user-details";
@@ -30,8 +26,13 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
     if (sendMessage) {
       sendMessage({
         id: chatId,
-        type: "tool-getPaseDeCaja",
-        text: `Quiero generar el pase de caja: ${referenciaCodigo}`,
+        type: "tool-tool-pagoEnLinea",
+        parts: [
+          {
+            type: "text",
+            text: `Quiero generar el pase de caja: ${referenciaCodigo}`,
+          },
+        ],
       });
     }
   };
@@ -39,7 +40,7 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
     if (sendMessage) {
       sendMessage({
         id: chatId,
-        type: "tool-getPaseDeCaja",
+        type: "tool-tool-pagoEnLinea",
         parts: [
           {
             type: "text",
@@ -150,8 +151,8 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
 
                     return (
                       <PaseDeCaja
-                        pdfBase64={output.pdfBase64}
-                        fileName={output.fileName}
+                        pdfBase64={output?.pdfBase64}
+                        fileName={output?.fileName}
                         onDescargarPaseCaja={handleDescargarPaseCaja}
                       />
                     );

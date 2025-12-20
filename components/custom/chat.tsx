@@ -6,6 +6,7 @@ import { useState, useCallback } from "react";
 
 import { Message as PreviewMessage } from "@/components/custom/message";
 import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom";
+import { StoredMessage } from "@/interfaces/chat/chat";
 
 import { MultimodalInput } from "./multimodal-input";
 
@@ -18,12 +19,13 @@ export function Chat({
 }) {
   const { messages, sendMessage, status, stop } = useChat<UIMessage>({
     id,
+    messages: initialMessages,
     onFinish: () => {
       window.history.replaceState({}, "", `/chat/${id}`);
     },
   });
 
-  console.log("messages", messages);
+  console.log("messages ========>", JSON.stringify(messages, null, 2));
 
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();

@@ -36,66 +36,62 @@ export async function POST(request: Request) {
 
     const { id, messages } = body as ChatRequest;
 
+    console.log("id ========>", id);
+
     const session = await auth();
     if (!session) return new Response("Unauthorized", { status: 401 });
 
     const modelMessages = convertToModelMessages(messages ?? []);
 
-    console.log("modelMessages", modelMessages);
+    const chat = await getChatById({ id });
+    // const initialMessages = Array.isArray(chat?.messages) ? chat.messages : [];
+    // const convertedInitialMessages = convertToModelMessages(initialMessages);
 
     const result = streamText({
       model: geminiProModel,
       stopWhen: stepCountIs(5),
       system: `
-Eres un asistente virtual para pago del predial y clima en Cancún.
+        Eres un asistente virtual para pago del predial para la ciudad de Playa del Carmen.
+        Reglas generales:
+        - Tono amigable, directo y respetuoso.
+        - Respuestas breves y claras de una linea o máximo dos.
+        - Nunca des información innecesaria.
+        - Después de cada llamada a un tool, finge que estás mostrando el resultado al usuario y no des más información.
+        - Hoy es ${new Date().toLocaleDateString()}.
 
-Reglas generales:
-- Tono amigable, directo y respetuoso.
-- Respuestas breves y claras.
-- Nunca des información innecesaria.
-- IMPORTANTE: Después de ejecutar cualquier función/herramienta, SIEMPRE debes generar al menos un mensaje de texto en tu respuesta. No solo ejecutes la función sin responder.
+        Flujo de usuarios:
+        - Si el usuario pregunta por usuarios (sin mencionar un id específico):
+          - DEBES llamar a la función getUsers sin argumentos.
 
-Flujo de usuarios:
-- Si el usuario pregunta por usuarios (sin mencionar un id específico):
-  - DEBES llamar a la función getUsers sin argumentos
-  - Responde solo con la lista de usuarios de forma breve.
-  Ejemplo de respuesta:
-  "Usuarios:
-  - Leanne Graham
-  - Ervin Howell
+        Detalle de usuario:
+        - Si el mensaje del usuario contiene "id:" seguido de un número:
+          - DEBES extraer el número que aparece después de "id:"
+          - DEBES llamar inmediatamente a getUserById pasando ese número como parámetro "id"
+          - DESPUÉS de ejecutar getUserById.
+          - REGLA ABSOLUTA: Después de llamar a getUserById no des más información.
 
-Detalle de usuario:
-- Si el mensaje del usuario contiene "id:" seguido de un número:
-  - DEBES extraer el número que aparece después de "id:"
-  - DEBES llamar inmediatamente a getUserById pasando ese número como parámetro "id"
-  - DESPUÉS de ejecutar getUserById, DEBES responder con este texto exacto: "Aquí está la información del usuario:"
-  - REGLA ABSOLUTA: Después de llamar a getUserById, SIEMPRE debes escribir al menos una frase de texto. Sin texto, el mensaje no se mostrará.
+        Flujo de clima:
+        - Si el usuario pregunta por clima o tiempo:
+          - Llama inmediatamente a getWeather con:
+            latitude: 20.6296
+            longitude: -87.0739
 
-Flujo de clima:
-- Si el usuario pregunta por clima o tiempo:
-  - Llama inmediatamente a getWeather con:
-    latitude: 20.6296
-    longitude: -87.0739
-  - Responde solo con el clima actual de forma breve.
+        Flujo de predial:
+        - Pide primero RFC.
+        - Si no tiene RFC, explica brevemente cómo obtenerlo.
+        - Luego pide clave catastral.
+        - Si no tiene clave catastral, responde:
+          "No se puede pagar el predial sin la clave catastral. Acude a nuestras oficinas para obtenerla."
+        - Teniendo el RFC y la clave catastral, ejecuta getPredialDummy.
 
+        Flujo de pase de caja:
+        - Si se elige generar un pase de caja, ejecuta getPaseDeCaja:
+          IMPORTANTE: No regrese nada más, solo ejecuta la función.
 
-Flujo de predial:
--Pide primero RFC.
- Si no tiene RFC, explica brevemente cómo obtenerlo.
-- Luego pide clave catastral.
-  - Si no tiene clave catastral, responde:
-   "No se puede pagar el predial sin la clave catastral. Acude a nuestras oficinas para obtenerla."
-- Teniendo el RFC y la clave catastral, ejecuta getPredialDummy.
-
-Flujo de pase de caja:
-- Si se elige generar un pase de caja, ejecuta getPaseDeCaja:
-  IMPORTANTE: No regrese nada más, solo ejecuta la función.
-
-Flujo de pago en linea:
-- Si el usuario pregunta por pago en linea:
-  - Llama inmediatamente a pagoEnLinea:
-    Por ejemplo: referenciaCodigo: 1234567890
-  IMPORTANTE: No regrese nada más, solo ejecuta la función.
+        Flujo de pago en linea:
+        - Si el usuario pregunta por pago en linea:
+          - Llama inmediatamente a pagoEnLinea:
+          IMPORTANTE: No regrese nada más, solo ejecuta la función.
       `,
       messages: modelMessages,
       tools: {
@@ -300,7 +296,12 @@ Flujo de pago en linea:
           const assistantMessage = {
             id: `msg-${Date.now()}-${Math.random()}`,
             role: "assistant" as const,
-            content: event.text || "",
+            parts: [
+              {
+                type: "text",
+                text: event.text || "",
+              },
+            ],
           };
           const allMessages = [...messages, assistantMessage];
           await saveChat({

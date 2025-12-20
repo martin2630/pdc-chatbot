@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import React, { useRef, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 
+import { StoredMessage } from "@/interfaces/chat/chat";
+
 import { ArrowUpIcon, StopIcon } from "./icons";
 import useWindowSize from "./use-window-size";
 import { Button } from "../ui/button";
