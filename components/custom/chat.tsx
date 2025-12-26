@@ -6,17 +6,17 @@ import { useState, useCallback } from "react";
 
 import { Message as PreviewMessage } from "@/components/custom/message";
 import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom";
-import { StoredMessage } from "@/interfaces/chat/chat";
 
 import { MultimodalInput } from "./multimodal-input";
 
-export function Chat({
-  id,
-  initialMessages,
-}: {
+interface Props {
   id: string;
   initialMessages: Array<UIMessage>;
-}) {
+}
+
+export function Chat({ id, initialMessages }: Props) {
+  const [input, setInput] = useState("");
+
   const { messages, sendMessage, status, stop } = useChat<UIMessage>({
     id,
     messages: initialMessages,
@@ -25,12 +25,8 @@ export function Chat({
     },
   });
 
-  console.log("messages ========>", JSON.stringify(messages, null, 2));
-
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
-
-  const [input, setInput] = useState("");
 
   // Derive isLoading from status
   const isLoading = status === "streaming";
@@ -45,8 +41,8 @@ export function Chat({
       sendMessage({
         role: "user",
         text: input,
-        ...chatRequestOptions,
         body: { id },
+        ...chatRequestOptions,
       } as any);
 
       setInput("");
@@ -74,9 +70,9 @@ export function Chat({
           className="flex flex-col gap-4 h-full w-dvw items-center overflow-y-scroll"
         >
           {messages?.length > 0 &&
-            messages?.map((message: UIMessage) => (
+            messages?.map((message: UIMessage, index: number) => (
               <PreviewMessage
-                key={message.id}
+                key={`${message.id}-${message.role}-${index}`}
                 chatId={id}
                 role={message.role}
                 parts={(message as any).parts || []}

@@ -2,9 +2,8 @@ import { convertToModelMessages, CoreMessage, UIMessage } from "ai";
 import { notFound } from "next/navigation";
 
 import { auth } from "@/app/(auth)/auth";
-import { Chat as PreviewChat } from "@/components/custom/chat";
+import { Chat } from "@/components/custom/chat";
 import { getChatById } from "@/db/queries";
-import { Chat } from "@/db/schema";
 
 export default async function Page({ params }: { params: any }) {
   const { id } = await params;
@@ -30,7 +29,7 @@ export default async function Page({ params }: { params: any }) {
   }
 
   return (
-    <PreviewChat
+    <Chat
       id={chatFromDb.id}
       initialMessages={chatFromDb.messages as UIMessage[]}
     />

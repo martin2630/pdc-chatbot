@@ -56,7 +56,8 @@ export async function POST(request: Request) {
         - Tono amigable, directo y respetuoso.
         - Respuestas breves y claras de una linea o máximo dos.
         - Nunca des información innecesaria.
-        - Después de cada llamada a un tool, finge que estás mostrando el resultado al usuario y no des más información.
+        - Después de cada llamada a un tool, NO generes ningún texto adicional. El resultado del tool se muestra automáticamente.
+        - ESPECIALMENTE para getPaseDeCaja y pagoEnLinea: NO generes ningún mensaje después de ejecutarlos. Termina inmediatamente.
         - Hoy es ${new Date().toLocaleDateString()}.
 
         Flujo de usuarios:
@@ -83,15 +84,25 @@ export async function POST(request: Request) {
         - Si no tiene clave catastral, responde:
           "No se puede pagar el predial sin la clave catastral. Acude a nuestras oficinas para obtenerla."
         - Teniendo el RFC y la clave catastral, ejecuta getPredialDummy.
+        No des información adicional, solo ejecuta la función.
 
         Flujo de pase de caja:
         - Si se elige generar un pase de caja, ejecuta getPaseDeCaja:
-          IMPORTANTE: No regrese nada más, solo ejecuta la función.
-
+          REGLA CRÍTICA Y ABSOLUTA: 
+          - Después de ejecutar getPaseDeCaja, NO generes NINGÚN texto adicional.
+          - NO digas "Tu pase de caja ha sido generado"
+          - NO digas "Puedes descargarlo"
+          - NO generes ningún mensaje de confirmación.
+          - NO agregues ningún texto después de la ejecución del tool.
+          - El resultado del tool se mostrará automáticamente al usuario, NO necesitas explicarlo.
+          - Después de ejecutar getPaseDeCaja, termina inmediatamente sin generar ningún texto.
+ "
         Flujo de pago en linea:
         - Si el usuario pregunta por pago en linea:
           - Llama inmediatamente a pagoEnLinea:
-          IMPORTANTE: No regrese nada más, solo ejecuta la función.
+          IMPORTANTE: 
+          - No regrese nada más, solo ejecuta la función. 
+          - NO regreses "Tu pago en línea ha sido generado. Puedes realizarlo a través de este enlace: [Pagar en línea](link). ¡Gracias! Si necesitas más ayuda, no dudes en decirlo."
       `,
       messages: modelMessages,
       tools: {
@@ -181,7 +192,7 @@ export async function POST(request: Request) {
         }),
         getPredialDummy: tool({
           description:
-            "Consulta el predial de Playa del Carmen. Necesita RFC y clave catastral.",
+            "Consulta el predial de Playa del Carmen. Necesita RFC y clave catastral. IMPORTANTE: No regrese nada más, solo ejecuta la función.",
           inputSchema: z.object({
             rfc: z.string(),
             claveCatastral: z.string(),
@@ -196,7 +207,7 @@ export async function POST(request: Request) {
         }),
         getPaseDeCaja: tool({
           description:
-            "Consulta el pase para pagar a caja. Necesita la referencia de codigo.",
+            "Consulta el pase para pagar a caja. Necesita la referencia de codigo. IMPORTANTE: Después de ejecutar esta función, NO generes ningún mensaje de texto adicional. El resultado se mostrará automáticamente al usuario con botones para ver y descargar el documento.",
           inputSchema: z.object({
             referenciaCodigo: z.string(),
           }),

@@ -70,16 +70,16 @@ export const History = ({ user }: { user: User | undefined }) => {
     });
 
     toast.promise(deletePromise, {
-      loading: "Deleting chat...",
+      loading: "Eliminando chat...",
       success: () => {
         mutate((history) => {
           if (history) {
             return history.filter((h) => h.id !== id);
           }
         });
-        return "Chat deleted successfully";
+        return "Chat eliminado correctamente";
       },
-      error: "Failed to delete chat",
+      error: "Error al eliminar el chat",
     });
 
     setShowDeleteDialog(false);
@@ -106,19 +106,19 @@ export const History = ({ user }: { user: User | undefined }) => {
         <SheetContent side="left" className="p-3 w-80 bg-muted">
           <SheetHeader>
             <VisuallyHidden.Root>
-              <SheetTitle className="text-left">History</SheetTitle>
+              <SheetTitle className="text-left">Historial</SheetTitle>
               <SheetDescription className="text-left">
-                {history === undefined ? "loading" : history.length} chats
+                {history === undefined ? "Cargando..." : history.length} chats
               </SheetDescription>
             </VisuallyHidden.Root>
           </SheetHeader>
 
           <div className="text-sm flex flex-row items-center justify-between">
             <div className="flex flex-row gap-2">
-              <div className="dark:text-zinc-300">History</div>
+              <div className="dark:text-zinc-300">Historial</div>
 
               <div className="dark:text-zinc-400 text-zinc-500">
-                {history === undefined ? "loading" : history.length} chats
+                {history === undefined ? "Cargando..." : history.length} chats
               </div>
             </div>
           </div>
@@ -169,13 +169,13 @@ export const History = ({ user }: { user: User | undefined }) => {
                     key={chat.id}
                     className={cx(
                       "flex flex-row items-center gap-6 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-md pr-2",
-                      { "bg-zinc-200 dark:bg-zinc-700": chat.id === id },
+                      { "bg-zinc-200 dark:bg-zinc-700": chat.id === id }
                     )}
                   >
                     <Button
                       variant="ghost"
                       className={cx(
-                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-0 text-sm font-normal flex flex-row items-center gap-2 pr-2 w-full transition-none",
+                        "hover:bg-zinc-200 dark:hover:bg-zinc-700 justify-between p-0 text-sm font-normal flex flex-row items-center gap-2 pr-2 w-full transition-none"
                       )}
                       asChild
                     >

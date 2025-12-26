@@ -2,10 +2,8 @@
 
 import { ChatRequestOptions, CreateUIMessage, UIMessage } from "ai";
 import { motion } from "framer-motion";
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useCallback, memo } from "react";
 import { toast } from "sonner";
-
-import { StoredMessage } from "@/interfaces/chat/chat";
 
 import { ArrowUpIcon, StopIcon } from "./icons";
 import useWindowSize from "./use-window-size";
@@ -25,15 +23,7 @@ const suggestedActions = [
   },
 ];
 
-export function MultimodalInput({
-  input,
-  setInput,
-  isLoading,
-  stop,
-  messages,
-  append,
-  handleSubmit,
-}: {
+interface Props {
   input: string;
   setInput: (value: string) => void;
   isLoading: boolean;
@@ -49,7 +39,17 @@ export function MultimodalInput({
     },
     chatRequestOptions?: ChatRequestOptions
   ) => void;
-}) {
+}
+
+export function MultimodalInput({
+  input,
+  setInput,
+  isLoading,
+  stop,
+  messages,
+  append,
+  handleSubmit,
+}: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
 
@@ -119,7 +119,7 @@ export function MultimodalInput({
 
       <Textarea
         ref={textareaRef}
-        placeholder="Send a message..."
+        placeholder="Envía un mensaje..."
         value={input}
         onChange={handleInput}
         className="min-h-[24px] overflow-hidden resize-none rounded-lg text-base bg-muted border-none"
@@ -162,3 +162,5 @@ export function MultimodalInput({
     </div>
   );
 }
+
+export default memo(MultimodalInput);
