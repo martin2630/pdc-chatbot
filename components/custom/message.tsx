@@ -97,7 +97,7 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
       </div>
 
       <div className="flex flex-col gap-2 w-full">
-        {role === "user" ? "User: " : "AI: "}
+        {role === "user" ? "Usuario: " : "Asistente de IA: "}
 
         {parts?.map((part, index) => {
           const partId =
@@ -112,7 +112,9 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
               {/* Tools functions */}
               {/* getWeather */}
               {part.type === "tool-getWeather" ? (
-                <Weather weatherAtLocation={part.output as WeatherAtLocation} />
+                <Weather
+                  weatherAtLocation={part?.output as WeatherAtLocation}
+                />
               ) : null}
 
               {/* getUsers */}

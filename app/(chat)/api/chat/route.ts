@@ -119,9 +119,12 @@ export async function POST(request: Request) {
             latitude: number;
             longitude: number;
           }) => {
-            const res = await fetch(
-              `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
-            );
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`;
+            console.log("url", url);
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Error obteniendo el clima");
+            const data = await res.json();
+            console.log("data", data);
             return await res.json();
           },
         } as any),
