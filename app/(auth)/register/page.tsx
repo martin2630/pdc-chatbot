@@ -51,7 +51,7 @@ export default function Page() {
           </p>
         </div>
         <AuthForm action={handleSubmit} defaultEmail={email}>
-          <SubmitButton>Sign Up</SubmitButton>
+          <SubmitButton>Registrarse</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {"Ya tienes una cuenta? "}
             <Link
@@ -60,7 +60,7 @@ export default function Page() {
             >
               Iniciar sesión
             </Link>
-            {" instead."}
+            {" de forma gratuita."}
           </p>
         </AuthForm>
       </div>
