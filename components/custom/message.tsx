@@ -4,7 +4,6 @@ import { UIMessage } from "ai";
 import { motion } from "framer-motion";
 
 import { User } from "@/interfaces/user.interfaces";
-import { WeatherAtLocation } from "@/interfaces/weather.interface";
 
 import { BotIcon, UserIcon } from "./icons";
 import PagoLinea from "../predial/pago-linea";
@@ -12,7 +11,6 @@ import PaseDeCaja from "../predial/pase-de-caja";
 import PredialDummy from "../predial/predial-dumy";
 import { ListUsers } from "../users/list-users";
 import { UserDetails } from "../users/user-details";
-import { Weather } from "../weather/weather";
 
 interface Props {
   chatId: string;
@@ -110,32 +108,26 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
               {part.type === "text" ? <span>{part.text}</span> : null}
 
               {/* Tools functions */}
-              {/* getWeather */}
-              {part.type === "tool-getWeather" ? (
-                <Weather
-                  weatherAtLocation={part?.output as WeatherAtLocation}
-                />
-              ) : null}
 
               {/* getUsers */}
-              {part.type === "tool-getUsers" ? (
+              {/* {part.type === "tool-getUsers" ? (
                 <ListUsers
                   charId={chatId}
                   users={part?.output as User[]}
                   sendMessage={sendMessage}
                 />
-              ) : null}
+              ) : null} */}
 
               {/* getUserById */}
-              {part.type === "tool-getUserById" ? (
+              {/* {part.type === "tool-getUserById" ? (
                 <UserDetails
                   user={part.output as User}
                   sendMessage={sendMessage}
                 />
-              ) : null}
+              ) : null} */}
 
               {/* getPredialDummy */}
-              {part.type === "tool-getPredialDummy" ? (
+              {part.type === "tool-getReferenceCode" ? (
                 <PredialDummy
                   part={part}
                   onGeneratePaseDeCaja={handleGeneratePaseDeCaja}

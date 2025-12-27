@@ -31,6 +31,8 @@ export const getPaseCajaService = async (referenciaCodigo: string) => {
   console.log("data", data);
 
   return {
+    ...data,
+    codeReference: referenciaCodigo,
     fileName: `pase_caja_${data.solicitudId}.pdf`,
     pdfBase64,
   };

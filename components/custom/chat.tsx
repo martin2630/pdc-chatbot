@@ -2,11 +2,13 @@
 
 import { useChat } from "@ai-sdk/react";
 import { ChatRequestOptions, UIMessage } from "ai";
+import { motion } from "framer-motion";
 import { useState, useCallback } from "react";
 
 import { Message as PreviewMessage } from "@/components/custom/message";
 import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom";
 
+import { BotIcon, LoaderIcon } from "./icons";
 import { MultimodalInput } from "./multimodal-input";
 
 interface Props {
@@ -79,6 +81,33 @@ export function Chat({ id, initialMessages }: Props) {
                 sendMessage={sendMessage}
               />
             ))}
+
+          {isLoading && (
+            <motion.div
+              className="flex flex-row gap-4 px-4 w-full md:w-[500px] md:px-0"
+              initial={{ y: 5, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+            >
+              <div className="size-[24px] border rounded-sm p-1 flex flex-col justify-center items-center shrink-0 text-zinc-500">
+                <BotIcon />
+              </div>
+              <div className="flex flex-col gap-2 w-full">
+                <span>Asistente de IA: </span>
+                <div className="flex items-center gap-2">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  >
+                    <LoaderIcon size={16} />
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           <div
             ref={messagesEndRef}

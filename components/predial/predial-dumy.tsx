@@ -14,7 +14,7 @@ const PredialDummy = ({
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-            Referencia de pago generada
+            Código de referencia:
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-xs text-zinc-500">Código:</span>
@@ -22,21 +22,43 @@ const PredialDummy = ({
               {part?.output?.codeReference}
             </code>
           </div>
+          <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+            Monto a pagar:
+          </h3>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-zinc-500">Total:</span>
+            <code className="px-2 py-1 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 rounded border border-blue-200 dark:border-blue-800">
+              {part?.output?.total}
+            </code>
+          </div>
         </div>
       </div>
-      <div className="flex gap-2 pt-2 border-t border-zinc-200 dark:border-zinc-800">
-        <button
-          onClick={() => onGeneratePaseDeCaja(part?.output?.codeReference)}
-          className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors shadow-sm hover:shadow-md"
-        >
-          Generar pase de caja
-        </button>
-        <button
+      <div className="flex flex-col gap-2 pt-2 border-t border-zinc-200 dark:border-zinc-800">
+        {/* <button
           onClick={() => onhandlePagarEnLinea(part?.output?.codeReference)}
           className="flex-1 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
         >
-          Pagar en línea
-        </button>
+          Consultar estado de cuenta
+        </button> */}
+        {part?.output?.solicitudEstado === "PP" && (
+          <>
+            <button
+              onClick={() => onGeneratePaseDeCaja(part?.output?.codeReference)}
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors shadow-sm hover:shadow-md"
+            >
+              Generar pase de caja
+            </button>
+            <button
+              onClick={() => onhandlePagarEnLinea(part?.output?.codeReference)}
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+            >
+              Pagar en línea
+            </button>
+          </>
+        )}
+        {part?.output?.solicitudEstado === "P" && (
+          <p>No tienes pendiente ningún pago.</p>
+        )}
       </div>
     </div>
   );
