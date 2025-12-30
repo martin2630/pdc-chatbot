@@ -19,7 +19,7 @@ const PagoLinea = ({ part }: { part: any }) => {
                   href={part?.urlIntencionCobro}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full text-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors shadow-sm hover:shadow-md"
+                  className="w-full text-center px-4 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors shadow-sm hover:shadow-md"
                 >
                   Continuar con el pago
                 </a>

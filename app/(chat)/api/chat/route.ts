@@ -14,9 +14,6 @@ import { deleteChatById, getChatById, saveChat } from "@/db/queries";
 import { getPagoEnLineaService } from "@/services/pago-en-linea-service";
 import { getPaseCajaService } from "@/services/pase-caja-service";
 import { getPredialService } from "@/services/predial-service";
-import { generarPaseCajaPDF } from "@/utils/generarPaseCajaPDF";
-import { pagoenLineaXml2Json } from "@/utils/pagoenLineaXml2Json";
-import { paseCajaXml2Json } from "@/utils/paseCajaXml2Json";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -40,8 +37,6 @@ export async function POST(request: Request) {
     }
 
     const { id, messages } = body as ChatRequest;
-
-    console.log("id ========>", id);
 
     const session = await auth();
     if (!session) return new Response("Unauthorized", { status: 401 });
@@ -109,45 +104,6 @@ export async function POST(request: Request) {
         - NO digas "Puedes descargarlo"
         - NO generes ningún mensaje de confirmación.
         - El resultado del tool se mostrará automáticamente al usuario.
-
-        // Eres un asistente virtual para pago del predial para la ciudad de Playa del Carmen.
-
-        // Reglas generales:
-        // - Tono amigable, directo y respetuoso.
-        // - Respuestas breves y claras de una linea o máximo dos.
-        // - Nunca des información que no sea referente al predial.
-        // - NO ejecutes herramientas/funciones a menos que el usuario lo solicite EXPLÍCITAMENTE.
-        // - Para saludos simples como "hola", "buenos días", solo responde con un saludo amigable y pregunta en qué puedes ayudar.
-        // - Después de cada llamada a un tool, NO generes ningún texto adicional. El resultado del tool se muestra automáticamente.
-        // - ESPECIALMENTE para getPaseDeCaja y pagoEnLinea: NO generes ningún mensaje después de ejecutarlos. Termina inmediatamente.
-        // - Hoy es ${new Date().toLocaleDateString()}.
-
-        // Flujo de pago predial:
-        // - Pide primero RFC.
-        // - Si no tiene RFC, explica brevemente cómo obtenerlo.
-        // - Luego pide clave catastral.
-        // - Si no tiene clave catastral, responde:
-        //   "No se puede pagar el predial sin la clave catastral. Acude a nuestras oficinas para obtenerla."
-        // - Teniendo el RFC y la clave catastral, ejecuta getReferenceCode.
-        // - REGLA CRÍTICA: Después de ejecutar getReferenceCode, NO ejecutes automáticamente getPaseDeCaja ni pagoEnLinea.
-        // - Después de ejecutar getReferenceCode, el resultado se mostrará con botones que el usuario puede usar.
-        // - NO ejecutes getPaseDeCaja a menos que el usuario explícitamente lo solicite.
-        // - NO ejecutes pagoEnLinea a menos que el usuario explícitamente lo solicite.
-
-        // Flujo de pase de caja:
-        // - getPaseDeCaja SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente.
-        // - REGLA ABSOLUTA: NO ejecutes getPaseDeCaja automáticamente después de getReferenceCode.
-        // - Después de ejecutar getPaseDeCaja, NO generes NINGÚN texto adicional.
-        // - NO digas "Tu pase de caja ha sido generado"
-        // - NO digas "Puedes descargarlo"
-        // - NO generes ningún mensaje de confirmación.
-        // - El resultado del tool se mostrará automáticamente al usuario.
-
-        // Flujo de pago en linea:
-        // - pagoEnLinea SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente.
-        // - REGLA ABSOLUTA: NO ejecutes pagoEnLinea automáticamente después de getReferenceCode.
-        // - Después de ejecutar pagoEnLinea, NO generes ningún mensaje adicional.
-        // - El resultado del tool se mostrará automáticamente al usuario.
       `,
       messages: modelMessages,
       tools: {
@@ -213,7 +169,7 @@ export async function POST(request: Request) {
         }),
         pagoEnLinea: tool({
           description:
-            "Pagar en linea. Esta función SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente. NO ejecutes esta función automáticamente después de getReferenceCode. Usa internamente el codeReference guardado de la última consulta de predial. Después de ejecutar esta función, NO generes ningún mensaje de texto adicional. El resultado se mostrará automáticamente al usuario con botones para ver y descargar el documento.",
+            "Pagar en linea. Esta función SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente. NO ejecutes esta función automáticamente después de getReferenceCode. Usa internamente el codeReference guardado de la última consulta de predial. IMPORTANT: NO generes ningún mensaje de texto adicional.",
           inputSchema: z.object({}),
           execute: async () => {
             try {

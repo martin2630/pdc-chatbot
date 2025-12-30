@@ -32,7 +32,6 @@ export const getPagoEnLineaService = async (referenciaCodigo: string) => {
     throw new Error("No se pudo procesar la respuesta del servicio");
   }
 
-  // Retornar los datos parseados
   return {
     error: false,
     link: data.urlIntencionCobro || data.link,

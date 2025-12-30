@@ -31,7 +31,40 @@ export function Chat({ id, initialMessages }: Props) {
     useScrollToBottom<HTMLDivElement>();
 
   // Derive isLoading from status
-  const isLoading = status === "streaming";
+  // status can be: "submitted" (waiting for response), "streaming" (receiving response), "ready" (idle)
+  const isActive = status === "streaming" || status === "submitted";
+
+  // Show loading when streaming, but hide it if the last assistant message has visible content
+  const lastMessage = messages[messages.length - 1];
+
+  // Check if last assistant message has visible content (text or tool results with output)
+  const hasVisibleContent =
+    lastMessage?.role === "assistant" &&
+    lastMessage.parts &&
+    lastMessage.parts.length > 0 &&
+    lastMessage.parts.some((part) => {
+      // Check if there's text content with actual text
+      if (part.type === "text" && part.text && part.text.trim().length > 0) {
+        return true;
+      }
+      // Check if there's a tool result with valid output
+      if (
+        (part.type === "tool-getReferenceCode" ||
+          part.type === "tool-getPaseDeCaja" ||
+          part.type === "tool-pagoEnLinea") &&
+        "output" in part &&
+        part.output !== undefined &&
+        part.output !== null &&
+        typeof part.output === "object" &&
+        Object.keys(part.output).length > 0
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+  // Show loading if active (streaming or submitted), unless last assistant message has visible content
+  const isLoading = isActive && !hasVisibleContent;
 
   const handleSubmit = useCallback(
     (
@@ -92,7 +125,7 @@ export function Chat({ id, initialMessages }: Props) {
                 <BotIcon />
               </div>
               <div className="flex flex-col gap-2 w-full">
-                <span>Asistente de IA: </span>
+                <span>Sofia IA: </span>
                 <div className="flex items-center gap-2">
                   <motion.div
                     animate={{ rotate: 360 }}

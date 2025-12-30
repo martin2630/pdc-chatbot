@@ -64,7 +64,7 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
       </div>
 
       <div className="flex flex-col gap-2 w-full">
-        {role === "user" ? "Usuario: " : "Asistente de IA: "}
+        {role === "user" ? "Usuario: " : "Sofia IA: "}
 
         {parts?.map((part, index) => {
           const partId =
@@ -77,23 +77,6 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
               {part.type === "text" ? <span>{part.text}</span> : null}
 
               {/* Tools functions */}
-
-              {/* getUsers */}
-              {/* {part.type === "tool-getUsers" ? (
-                <ListUsers
-                  charId={chatId}
-                  users={part?.output as User[]}
-                  sendMessage={sendMessage}
-                />
-              ) : null} */}
-
-              {/* getUserById */}
-              {/* {part.type === "tool-getUserById" ? (
-                <UserDetails
-                  user={part.output as User}
-                  sendMessage={sendMessage}
-                />
-              ) : null} */}
 
               {/* getPredialDummy */}
               {part.type === "tool-getReferenceCode" ? (

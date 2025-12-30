@@ -44,7 +44,7 @@ const PredialDummy = ({
           <>
             <button
               onClick={() => onGeneratePaseDeCaja(part?.output?.codeReference)}
-              className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors shadow-sm hover:shadow-md"
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-md transition-colors shadow-sm hover:shadow-md bg-primary"
             >
               Generar pase de caja
             </button>
