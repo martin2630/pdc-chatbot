@@ -37,12 +37,6 @@ export const PdfPreview = ({ pdfUrl }: PdfPreviewProps) => {
           >
             Abrir
           </a>
-          <a
-            onClick={handleDownload}
-            className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
-          >
-            Descargar
-          </a>
         </div>
       </div>
     </div>
