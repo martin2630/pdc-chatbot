@@ -213,7 +213,7 @@ export async function POST(request: Request) {
         }),
         pagoEnLinea: tool({
           description:
-            "Pagar en linea. Esta función SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente. NO ejecutes esta función automáticamente después de getReferenceCode. Después de ejecutar esta función, NO generes ningún mensaje adicional.",
+            "Pagar en linea. Esta función SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente. NO ejecutes esta función automáticamente después de getReferenceCode. Usa internamente el codeReference guardado de la última consulta de predial. Después de ejecutar esta función, NO generes ningún mensaje de texto adicional. El resultado se mostrará automáticamente al usuario con botones para ver y descargar el documento.",
           inputSchema: z.object({}),
           execute: async () => {
             try {

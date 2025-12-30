@@ -1,3 +1,5 @@
+import { getPdfSignedUrl } from "@/lib/getPdfSignedUrl";
+import { uploadPdfToS3 } from "@/lib/uploadPdfToS3";
 import { generarPaseCajaPDF } from "@/utils/generarPaseCajaPDF";
 import { paseCajaXml2Json } from "@/utils/paseCajaXml2Json";
 
@@ -28,12 +30,22 @@ export const getPaseCajaService = async (referenciaCodigo: string) => {
 
   const pdfBase64 = await generarPaseCajaPDF(data);
 
+  const s3Key = await uploadPdfToS3({
+    base64: pdfBase64,
+    fileName: `pase_caja_${data.solicitudId}.pdf`,
+  });
+
+  // 3️⃣ Generar URL firmada
+  const pdfUrl = await getPdfSignedUrl(s3Key);
+
   console.log("data", data);
 
-  return {
+  const dataObj = {
     ...data,
     codeReference: referenciaCodigo,
     fileName: `pase_caja_${data.solicitudId}.pdf`,
-    pdfBase64,
+    pdfUrl: pdfUrl,
   };
+
+  return dataObj;
 };

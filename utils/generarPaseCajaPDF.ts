@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 import { PDFDocument, StandardFonts, rgb, PDFFont } from "pdf-lib";
 
 const PAGE_WIDTH = 612;
@@ -15,6 +18,42 @@ export async function generarPaseCajaPDF(data: any) {
 
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+  // =========================
+  // LOGO
+  // =========================
+
+  const logoPDC = await pdf.embedPng(
+    fs.readFileSync(path.join(process.cwd(), "public/images/logo-pdc.png"))
+  );
+
+  // Cargar logos de bancos
+  const logoSantander = await pdf.embedPng(
+    fs.readFileSync(
+      path.join(process.cwd(), "public/images/santander-logo.jpg")
+    )
+  );
+  const logoHSBC = await pdf.embedPng(
+    fs.readFileSync(path.join(process.cwd(), "public/images/hsbc-logo.jpg"))
+  );
+  const logoBanamex = await pdf.embedPng(
+    fs.readFileSync(path.join(process.cwd(), "public/images/banamex-logo.jpg"))
+  );
+  const logoBBVA = await pdf.embedPng(
+    fs.readFileSync(path.join(process.cwd(), "public/images/bbva-logo.jpg"))
+  );
+  const logoScotiabank = await pdf.embedPng(
+    fs.readFileSync(
+      path.join(process.cwd(), "public/images/scotiabank-logo.jpg")
+    )
+  );
+
+  const scale = 100 / logoPDC.width;
+
+  const logoScaled = {
+    width: 100,
+    height: logoPDC.height * scale,
+  };
 
   // =========================
   // NUEVA PÁGINA
@@ -143,6 +182,17 @@ export async function generarPaseCajaPDF(data: any) {
   const centerX = PAGE_WIDTH / 2;
 
   // =========================
+  // LOGO
+  // =========================
+  const logoX = 482; // posición horizontal (ajusta a tu gusto)
+  page.drawImage(logoPDC, {
+    x: logoX,
+    y: currentY - 50,
+    width: logoScaled.width,
+    height: logoScaled.height,
+  });
+
+  // =========================
   // BLOQUE INSTITUCIONAL
   // =========================
   draw("MUNICIPIO DE PLAYA DEL CARMEN", centerX, currentY, 11, true, "center");
@@ -150,10 +200,6 @@ export async function generarPaseCajaPDF(data: any) {
   draw("TESORERIA MUNICIPAL", centerX, currentY, 11, true, "center");
   currentY -= 14;
   draw("PRESIDENCIA MUNICIPAL", centerX, currentY, 11, false, "center");
-
-  // =========================
-  // LOGO
-  // =========================
 
   // =========================
   // FOLIO
@@ -281,7 +327,18 @@ export async function generarPaseCajaPDF(data: any) {
   currentY -= 14;
   draw("Usuario (Impresión)", 50, currentY, 9, true);
   draw("Total", 410, currentY, 9, true);
-  draw(`$ ${data.total.toFixed(2)}`, 450, currentY, 9, true, "right", 100);
+  draw(
+    `$ ${data.total.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`,
+    450,
+    currentY,
+    9,
+    true,
+    "right",
+    100
+  );
 
   // =========================
   // OBSERVACIONES
@@ -329,13 +386,82 @@ export async function generarPaseCajaPDF(data: any) {
     true
   );
 
-  currentY -= 72;
+  // =========================
+  // SECCIÓN DE BANCOS
+  // =========================
+  currentY -= 50;
+  const col1 = 50;
+  const col2 = 300;
+  const bankLogoWidth = 60;
+  const bankLogoHeight = 25;
+
+  // --- FILA 1: Santander y Banamex ---
+  page.drawImage(logoSantander, {
+    x: col1,
+    y: currentY,
+    width: bankLogoWidth,
+    height: bankLogoHeight,
+  });
+  draw("Convenio 8917", col1 + bankLogoWidth + 5, currentY + 8, 9, false);
+
+  page.drawImage(logoBanamex, {
+    x: col2,
+    y: currentY,
+    width: bankLogoWidth,
+    height: bankLogoHeight,
+  });
+  draw("Convenio 309401", col2 + bankLogoWidth + 5, currentY + 8, 9, false);
+
+  // --- FILA 2: HSBC y Scotiabank ---
+  currentY -= 40;
+  page.drawImage(logoHSBC, {
+    x: col1,
+    y: currentY,
+    width: bankLogoWidth,
+    height: bankLogoHeight,
+  });
+  draw("Convenio 1405", col1 + bankLogoWidth + 5, currentY + 14, 8, true);
+  draw(
+    "Cuenta CLABE: 021180550300014051",
+    col1 + bankLogoWidth + 5,
+    currentY + 4,
+    7,
+    false
+  );
+
+  page.drawImage(logoScotiabank, {
+    x: col2,
+    y: currentY,
+    width: bankLogoWidth,
+    height: bankLogoHeight,
+  });
+  draw("Convenio 2695", col2 + bankLogoWidth + 5, currentY + 8, 9, false);
+
+  // --- FILA 3: BBVA ---
+  currentY -= 40;
+  page.drawImage(logoBBVA, {
+    x: col1,
+    y: currentY,
+    width: bankLogoWidth,
+    height: bankLogoHeight,
+  });
+  draw("Convenio 01340093", col1 + bankLogoWidth + 5, currentY + 14, 8, true);
+  draw(
+    "Cuenta CLABE: 012914002013400931",
+    col1 + bankLogoWidth + 5,
+    currentY + 4,
+    7,
+    false
+  );
+
+  currentY -= 24; // Espacio antes del siguiente bloque de texto
+
   currentY = drawParagraph(
     "Nota: los pagos realizados a la cuenta clabe (SPEI referenciado) deberán de tener como referencia de pago la linea de captura de 20 digitos (sin espacios). Se reciben cheques certificados o cheques de caja; Beneficiario MUNICIPIO DE PLAYA DEL CARMEN",
     50,
     CONTENT_WIDTH,
     9,
-    false
+    true
   );
 
   currentY -= 5;

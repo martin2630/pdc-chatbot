@@ -49,39 +49,8 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
     }
   };
 
-  const handleDescargarPaseCaja = ({
-    pdfBase64,
-    fileName,
-  }: {
-    pdfBase64: string;
-    fileName: string;
-  }) => {
-    // 1️⃣ Base64 → bytes
-    const byteCharacters = atob(pdfBase64);
-    const byteNumbers = new Array(byteCharacters.length);
-
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-
-    // 2️⃣ Bytes → Blob PDF
-    const pdfBlob = new Blob([byteArray], {
-      type: "application/pdf",
-    });
-
-    // 3️⃣ Abrir o descargar
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-
-    // 👉 abrir en nueva pestaña
+  const handleDescargarPaseCaja = ({ pdfUrl }: { pdfUrl: string }) => {
     window.open(pdfUrl, "_blank");
-
-    // 👉 o forzar descarga
-    // const a = document.createElement("a");
-    // a.href = pdfUrl;
-    // a.download = fileName;
-    // a.click();
   };
 
   return (
@@ -139,17 +108,11 @@ export const Message = ({ chatId, role, parts, sendMessage }: Props) => {
               {part.type === "tool-getPaseDeCaja"
                 ? (() => {
                     const output = part.output as {
-                      pdfBase64: string;
+                      pdfUrl: string;
                       fileName: string;
                     };
 
-                    return (
-                      <PaseDeCaja
-                        pdfBase64={output?.pdfBase64}
-                        fileName={output?.fileName}
-                        onDescargarPaseCaja={handleDescargarPaseCaja}
-                      />
-                    );
+                    return <PaseDeCaja pdfUrl={output?.pdfUrl} />;
                   })()
                 : null}
 
