@@ -129,7 +129,9 @@ export function MultimodalInput({
             event.preventDefault();
 
             if (isLoading) {
-              toast.error("Please wait for the model to finish its response!");
+              toast.error(
+                "Por favor, espera a que el modelo termine de responder."
+              );
             } else {
               submitForm();
             }

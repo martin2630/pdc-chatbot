@@ -9,23 +9,14 @@ interface PdfPreviewProps {
 export const PdfPreview = ({ pdfUrl }: PdfPreviewProps) => {
   const fileName = "pase_caja.pdf";
 
-  const handleDownload = async () => {
-    try {
-      const response = await fetch(pdfUrl, { mode: "cors" });
-      const blob = await response.blob();
-      const urlBlob = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = urlBlob;
-      link.download = "miArchivo.pdf"; // nombre del archivo
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      window.URL.revokeObjectURL(urlBlob);
-    } catch (error) {
-      console.error("Error al descargar el PDF:", error);
-    }
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = "pase-caja.pdf"; // solo funciona si el server lo permite
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   };
 
   return (

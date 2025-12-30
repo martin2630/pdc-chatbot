@@ -26,6 +26,7 @@ export async function uploadPdfToS3({
       Key: key,
       Body: buffer,
       ContentType: "application/pdf",
+      ContentDisposition: `attachment; filename=${key}`,
     })
   );
 
