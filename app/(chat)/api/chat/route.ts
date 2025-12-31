@@ -10,15 +10,18 @@ import { z } from "zod";
 
 import { geminiProModel } from "@/ai";
 import { auth } from "@/app/(auth)/auth";
-import { deleteChatById, getChatById, saveChat } from "@/db/queries";
+import {
+  deleteChatById,
+  getChatById,
+  saveChat,
+  updateChatReference,
+} from "@/db/queries";
 import { getPagoEnLineaService } from "@/services/pago-en-linea-service";
 import { getPaseCajaService } from "@/services/pase-caja-service";
 import { getPredialService } from "@/services/predial-service";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-let lastCodeReference: string | null = null;
 
 interface ChatRequest {
   id: string;
@@ -42,10 +45,6 @@ export async function POST(request: Request) {
     if (!session) return new Response("Unauthorized", { status: 401 });
 
     const modelMessages = convertToModelMessages(messages ?? []);
-
-    // const chat = await getChatById({ id });
-    // const initialMessages = Array.isArray(chat?.messages) ? chat.messages : [];
-    // const convertedInitialMessages = convertToModelMessages(initialMessages);
 
     const result = streamText({
       model: geminiProModel,
@@ -125,22 +124,29 @@ export async function POST(request: Request) {
             Si no viene el dato codeReference, el campo errorDescription puede darte contexto del error.
           `,
           inputSchema: z.object({
-            rfc: z.string(),
-            claveCatastral: z.string(),
+            rfc: z.string().min(12).max(13),
+            claveCatastral: z
+              .string()
+              .min(18)
+              .max(18)
+              .regex(/^\d{15}-\d{2}$/, "Clave catastral inválida"),
           }),
           execute: async ({ rfc, claveCatastral }) => {
             try {
-              console.log("getReferenceCode try");
               const result = await getPredialService({ rfc, claveCatastral });
-              lastCodeReference = result?.codeReference ?? null;
 
-              if (!lastCodeReference) {
-                throw new Error("Primero debes consultar el predial.");
+              if (!result?.codeReference) {
+                throw new Error(
+                  "No se pudo obtener la referencia del predial."
+                );
               }
-              const data = await getPaseCajaService(lastCodeReference);
+
+              await updateChatReference(id, result?.codeReference ?? null);
+
+              const data = await getPaseCajaService(result?.codeReference);
+
               return data;
             } catch (error) {
-              console.log("getReferenceCode catch");
               console.error("Error al obtener predial:", error);
               const errorMessage =
                 error instanceof Error
@@ -157,11 +163,14 @@ export async function POST(request: Request) {
             "Consulta el pase para pagar a caja. Esta función SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente. NO ejecutes esta función automáticamente después de getReferenceCode. Usa internamente el codeReference guardado de la última consulta de predial. Después de ejecutar esta función, NO generes ningún mensaje de texto adicional. El resultado se mostrará automáticamente al usuario con botones para ver y descargar el documento.",
           inputSchema: z.object({}),
           execute: async () => {
+            const chatData = await getChatById({ id });
             try {
-              if (!lastCodeReference) {
+              if (!chatData?.lastCodeReference) {
                 throw new Error("Primero debes consultar el predial.");
               }
-              const data = await getPaseCajaService(lastCodeReference);
+              const data = await getPaseCajaService(
+                chatData?.lastCodeReference ?? null
+              );
               return data;
             } catch (error) {
               console.error("Error al obtener pase de caja:", error);
@@ -180,11 +189,15 @@ export async function POST(request: Request) {
             "Pagar en linea. Esta función SOLO debe ejecutarse cuando el usuario explícitamente lo solicite o haga clic en el botón correspondiente. NO ejecutes esta función automáticamente después de getReferenceCode. Usa internamente el codeReference guardado de la última consulta de predial. IMPORTANT: NO generes ningún mensaje de texto adicional.",
           inputSchema: z.object({}),
           execute: async () => {
+            const chatData = await getChatById({ id });
+
             try {
-              if (!lastCodeReference) {
+              if (!chatData?.lastCodeReference) {
                 throw new Error("Primero debes consultar el predial.");
               }
-              const data = await getPagoEnLineaService(lastCodeReference);
+              const data = await getPagoEnLineaService(
+                chatData?.lastCodeReference ?? null
+              );
               return data;
             } catch (error) {
               console.error("Error al obtener pago en línea:", error);
@@ -223,6 +236,9 @@ export async function POST(request: Request) {
         // }),
       },
       onFinish: async (event) => {
+        if (event.toolCalls?.length) return;
+        if (!event.text?.trim()) return;
+
         if (session.user && session.user.id) {
           const assistantMessage = {
             id: `msg-${Date.now()}-${Math.random()}`,

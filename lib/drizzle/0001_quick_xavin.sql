@@ -1,0 +1,1 @@
+ALTER TABLE "Chat" ADD COLUMN "lastCodeReference" varchar(50);

@@ -61,7 +61,6 @@ export function ListUsers({ users = SAMPLE_USERS, sendMessage }: Props) {
   const append = async (message: { role: string; content: string }) => {
     // Si usamos sendMessage del prop, automáticamente incluye todos los mensajes
     // Si usamos el hook, también debería incluirlos automáticamente
-    console.log("Enviando mensaje. Mensajes actuales:");
     if (sendMessage) {
       await sendMessage(message);
     }

@@ -7,16 +7,11 @@ import { getChatById } from "@/db/queries";
 
 export default async function Page({ params }: { params: any }) {
   const { id } = await params;
-  console.log("id ========", id);
   const chatFromDb = await getChatById({ id });
-
-  console.log("chatFromDb ========>", JSON.stringify(chatFromDb, null, 2));
 
   if (!chatFromDb) {
     notFound();
   }
-
-  console.log("chat ========>", JSON.stringify(chatFromDb, null, 2));
 
   const session = await auth();
 

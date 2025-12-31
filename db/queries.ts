@@ -140,3 +140,13 @@ export async function updateReservation({
     })
     .where(eq(reservation.id, id));
 }
+
+export async function updateChatReference(
+  chatId: string,
+  codeReference: string
+) {
+  return await db
+    .update(chat)
+    .set({ lastCodeReference: codeReference })
+    .where(eq(chat.id, chatId));
+}

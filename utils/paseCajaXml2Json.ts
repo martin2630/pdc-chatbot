@@ -62,7 +62,6 @@ export const paseCajaXml2Json = (xmlSoap: string) => {
 
     // 6. Parsear el XML interno (ConsultaPasesCaja)
     const dataObj = parser.parse(innerXmlStr);
-    console.log("dataObj =====", dataObj);
 
     const item =
       dataObj.ConsultaPasesCaja?.["ConsultaPasesCaja.ConsultaPasesCajaItem"];
@@ -74,8 +73,6 @@ export const paseCajaXml2Json = (xmlSoap: string) => {
       );
       return null;
     }
-
-    console.log("item =====", item?.["Fuentescolns:Fuentes"]);
 
     // 7. Normalizar los conceptos (Fuentes)
     // Nota: fast-xml-parser crea un objeto si es 1 solo, o un array si son varios.
@@ -89,9 +86,6 @@ export const paseCajaXml2Json = (xmlSoap: string) => {
         ? fuentesRaw
         : [fuentesRaw]
       : [];
-
-    console.log("dataObj item", dataObj);
-    console.log("conceptos", JSON.stringify(conceptos, null, 2));
 
     // 8. Mapear conceptos y convertir importes a números
     const conceptosMapeados = conceptos.map((f) => {

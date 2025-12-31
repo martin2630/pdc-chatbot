@@ -15,12 +15,8 @@ export const pagoenLineaXml2Json = (xmlSoap: string) => {
     // 1. Parsear el sobre SOAP
     const soapObj = parser.parse(xmlSoap);
 
-    console.log("xmlSoap =====", soapObj);
-
     // 2. Intentar diferentes variantes de namespace para el Envelope
     const envelope = soapObj["s:Envelope"] || soapObj.Envelope;
-
-    console.log("envelope =====", envelope);
 
     if (!envelope) {
       console.error(
@@ -63,8 +59,6 @@ export const pagoenLineaXml2Json = (xmlSoap: string) => {
       );
       return null;
     }
-
-    console.log("item =====", item);
 
     // Extraer valores
     const codigoError = item["a:CodigoError"] ?? 0;

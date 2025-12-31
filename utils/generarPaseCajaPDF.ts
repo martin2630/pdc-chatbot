@@ -379,7 +379,10 @@ export async function generarPaseCajaPDF(data: any) {
   draw(LINEA_CAPTURA, 50 + lineaCapturaTextWidth + 10, currentY, 11, true);
   const lineaCapturaNumbersWidth = font.widthOfTextAtSize(LINEA_CAPTURA, 11);
   draw(
-    `$ ${data.total.toFixed(2)}`,
+    `$ ${data.total.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`,
     50 + lineaCapturaTextWidth + 10 + lineaCapturaNumbersWidth + 10,
     currentY,
     11,

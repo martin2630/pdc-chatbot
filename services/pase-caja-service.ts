@@ -1,6 +1,7 @@
 import { getPdfSignedUrl } from "@/lib/getPdfSignedUrl";
 import { uploadPdfToS3 } from "@/lib/uploadPdfToS3";
 import { generarPaseCajaPDF } from "@/utils/generarPaseCajaPDF";
+import { paseCajaResumenMapper } from "@/utils/mappers/pase-caja-resume.mapper";
 import { paseCajaXml2Json } from "@/utils/paseCajaXml2Json";
 
 export const getPaseCajaService = async (referenciaCodigo: string) => {
@@ -35,17 +36,14 @@ export const getPaseCajaService = async (referenciaCodigo: string) => {
     fileName: `pase_caja_${data.solicitudId}.pdf`,
   });
 
-  // 3️⃣ Generar URL firmada
   const pdfUrl = await getPdfSignedUrl(s3Key);
 
-  console.log("data", data);
-
-  const dataObj = {
+  const dataObj = paseCajaResumenMapper({
     ...data,
     codeReference: referenciaCodigo,
     fileName: `pase_caja_${data.solicitudId}.pdf`,
     pdfUrl: pdfUrl,
-  };
+  });
 
   return dataObj;
 };

@@ -18,8 +18,6 @@ export async function uploadPdfToS3({
 
   const key = `${folder}/${Date.now()}-${fileName}`;
 
-  console.log("key", key);
-
   await s3.send(
     new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME!,

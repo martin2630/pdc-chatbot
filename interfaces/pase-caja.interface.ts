@@ -1,3 +1,5 @@
+import { number } from "zod/v4";
+
 export interface PaseCajaConcepto {
   concepto: string;
   nombre: string;
@@ -30,4 +32,38 @@ export interface PaseCaja {
   solicitudReciboFolio: string;
   conceptos: PaseCajaConcepto[];
   total: number;
+  codeReference?: string;
+  fileName?: string;
+  pdfUrl?: string;
+}
+
+export interface PaseCajaResumen {
+  grupoTramiteId: Number;
+  tramiteId: Number;
+  solicitudId: Number;
+  solicitudEstado: String;
+  solicitudDescripcion: String;
+  solicitudFecha: String;
+  solicitudCantidad: Number;
+  solicitudVencimientoFecha: String;
+  solicitudUsuario: String;
+  solicitudObservaciones: String;
+  conceptos: PaseCajaConcepto[];
+  total: Number;
+  codeReference?: string;
+  fileName?: string;
+  pdfUrl?: string;
+  // solicitudRedondear: String;
+  // cvePersona: Number;
+  // solicitudPadronId: Number;
+  // solicitudTipoIngreso: String;
+  // solicitudHora: String;
+  // solicitudIp: String;
+  // SolicitudCveTerapeuta: Number;
+  // solicitudNoExpediente: String;
+  // solicitudArticulo: String;
+  // solicitudProyectoBanco: Number;
+  // solicitudURLPago: String;
+  // solicitudReciboSerie: String;
+  // solicitudReciboFolio: Number;
 }

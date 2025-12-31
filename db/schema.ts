@@ -21,6 +21,9 @@ export const chat = pgTable("Chat", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   createdAt: timestamp("createdAt").notNull(),
   messages: json("messages").notNull(),
+
+  lastCodeReference: varchar("lastCodeReference", { length: 50 }),
+
   userId: uuid("userId")
     .notNull()
     .references(() => user.id),

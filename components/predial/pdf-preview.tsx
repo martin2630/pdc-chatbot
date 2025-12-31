@@ -23,7 +23,7 @@ export const PdfPreview = ({ pdfUrl }: PdfPreviewProps) => {
             href={pdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+            className="w-full text-center px-4 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors shadow-sm hover:shadow-md"
           >
             Abrir
           </a>

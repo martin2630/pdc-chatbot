@@ -29,8 +29,6 @@ export const getPredialService = async ({
     body: soapBody,
   });
   const result = await res.text();
-  console.log("result", result);
   const data = getPredialXml2Json(result);
-  console.log("data", data);
   return data;
 };

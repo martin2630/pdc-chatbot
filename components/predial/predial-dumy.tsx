@@ -18,7 +18,7 @@ const PredialDummy = ({
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-xs text-zinc-500">Código:</span>
-            <code className="px-2 py-1 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 rounded border border-blue-200 dark:border-blue-800">
+            <code className="px-2 py-1 text-xs font-mono font-semibold text-gray-600 dark:text-white bg-red-50 dark:bg-white/20 rounded border border-primary dark:border-white">
               {part?.output?.codeReference}
             </code>
           </div>
@@ -27,8 +27,15 @@ const PredialDummy = ({
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-xs text-zinc-500">Total:</span>
-            <code className="px-2 py-1 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 rounded border border-blue-200 dark:border-blue-800">
-              {part?.output?.total}
+            <code className="px-2 py-1 text-xs font-mono font-semibold text-gray-600 dark:text-white bg-red-50 dark:bg-white/20 rounded border border-primary dark:border-white">
+              {`$${
+                part?.output?.total
+                  ? part?.output?.total.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : 0
+              }`}
             </code>
           </div>
         </div>
@@ -50,14 +57,14 @@ const PredialDummy = ({
             </button>
             <button
               onClick={() => onhandlePagarEnLinea(part?.output?.codeReference)}
-              className="flex-1 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-primary dark:border-primary rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             >
               Pagar en línea
             </button>
           </>
         )}
         {part?.output?.solicitudEstado === "P" && (
-          <p>No tienes pendiente ningún pago.</p>
+          <p>No tienes pagos pendientes.</p>
         )}
       </div>
     </div>
