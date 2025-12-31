@@ -64,7 +64,10 @@ export async function POST(request: Request) {
         - Nunca des información que no sea referente al predial.
         - NO ejecutes herramientas/funciones a menos que el usuario lo solicite EXPLÍCITAMENTE.
         - Para saludos simples como "hola", "buenos días", solo responde con un saludo amigable y pregunta en qué puedes ayudar.
-        - REGLA CRÍTICA: Después de ejecutar CUALQUIER tool (especialmente getReferenceCode, getPaseDeCaja, pagoEnLinea), TERMINA INMEDIATAMENTE. NO generes texto adicional. NO expliques. NO confirmes. El resultado se muestra automáticamente.
+        - REGLA CRÍTICA: Después de ejecutar CUALQUIER tool (especialmente getReferenceCode, getPaseDeCaja, pagoEnLinea), TERMINA INMEDIATAMENTE. 
+        -NO generes texto adicional. 
+        -NO expliques. 
+        -NO confirmes.
         - Hoy es ${new Date().toLocaleDateString()}.
 
         FLUJO OBLIGATORIO (CRÍTICO):
@@ -99,11 +102,16 @@ export async function POST(request: Request) {
 
         PAGO EN LÍNEA:
         - pagoEnLinea SOLO se ejecuta si el usuario lo solicita explícitamente.
-        - Después de ejecutar pagoEnLinea, NO generes ningún mensaje adicional.
-        - NO digas "Tu pago en línea ha sido realizado"
-        - NO digas "Puedes descargarlo"
-        - NO generes ningún mensaje de confirmación.
-        - El resultado del tool se mostrará automáticamente al usuario.
+          - REGLAS ABSOLUTAS Y CRÍTICAS DESPUÉS DE EJECUTAR pagoEnLinea:
+            * NO generes NINGÚN texto.
+            * NO digas "Aquí tienes el enlace para realizar el pago en línea".
+            * NO digas "Aquí puedes continuar con el pago en línea".
+            * NO digas "¡Aquí tienes el enlace para realizar el pago en línea".
+            * NO REGRESES NADA AL USUARIO.
+            * NO hagas preguntas al usuario.
+            * NO proporciones información adicional.
+            * TERMINA INMEDIATAMENTE después de ejecutar la función.
+            * El resultado se mostrará automáticamente con botones.
       `,
       messages: modelMessages,
       tools: {

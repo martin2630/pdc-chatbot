@@ -9,16 +9,6 @@ interface PdfPreviewProps {
 export const PdfPreview = ({ pdfUrl }: PdfPreviewProps) => {
   const fileName = "pase_caja.pdf";
 
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = pdfUrl;
-    link.download = "pase-caja.pdf"; // solo funciona si el server lo permite
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  };
-
   return (
     <div className="flex flex-col gap-3 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 bg-zinc-50 dark:bg-zinc-900">
       <div className="flex items-center justify-between">
